@@ -11,5 +11,6 @@ It is recommended that you download the entire repo before preceeding to install
   
 
 #### Plugins
-1. Copy desired plugins to the `plugins` directory of Clipjump. Remember that the sorting folders (external, pformat) used here is only for categorizing purposes. You will need to have all plugins in the root folder itself.
-2. Then copy the `lib_extras` folder you downloaded from this repo and put it in the Clipjump root folder such that `Clipjump.exe` and `lib_extras` are parallel. Replace files if needed.
+1. Download desired plugins and copy them to the `plugins` directory of Clipjump. Remember that the sorting folders (external, pformat) used here is only for categorizing purposes. You will need to have all plugins in the root folder itself.
+2. Make sure you download the `filename`.lib folder wherever applicable. Example - `pformat.commonformats` has a lib folder `pformat.commonformats.lib` and that needs to be 
+present.
