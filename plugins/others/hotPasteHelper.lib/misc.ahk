@@ -9,15 +9,15 @@
 ; -----------------------------------------------
 ; DATE & TIME
 ; -----------------------------------------------
-::date::
+::datex::
 	API.runPlugin("hotPasteHelper.ahk", "", "__DATETIME__")
 	return
 
-::datecurrent::
+::datecurrentx::
 	API.runPlugin("hotPasteHelper.ahk", "", "Current date is: __DATETIME|yyyy. MMMM dd.__")
 	return
 
-::daterange::
+::daterangex::
 	API.runPlugin("hotPasteHelper.ahk", "", "Selected date: __DATEPICKER|yyyy.MMMM dd.__")
 	return
 
@@ -25,7 +25,7 @@
 	API.runPlugin("hotPasteHelper.ahk", "", "Short date is: __DATETIME|ShortDate__")
 	return
 
-::time::
+::timex::
 	API.runPlugin("hotPasteHelper.ahk", "", "Current time is: __DATETIME|H:mm:ss__")
 	return
 
@@ -43,16 +43,15 @@
 ; -----------------------------------------------
 ; OTHERS
 ; -----------------------------------------------
-::sep::
+::sepx::
 	API.PasteText("-----------------------------------------------")
 	return
 
-::htt::
-::http::
+::httpx::
 	API.PasteText("http://")
 	return
 
-::lorem::
+::loremx::
 	API.PasteText("Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.")
 	return
 

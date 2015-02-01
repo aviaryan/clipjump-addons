@@ -8,13 +8,13 @@
 ; -----------------------------------------------
 ; PHP
 ; -----------------------------------------------
-:*?:hdoc::
+:*?:hdocx::
 	API.runPlugin("hotPasteHelper.ahk", "PHP Heredoc", "<<< __?Heredoc tag__`r`r__?LAST__;")
 	SendInput {Up}
 	SendInput {Tab}
 	return
 
-::pp::
+::ppx::
 :*:ppp::
 	API.PasteText("<?php  ?>")
 	SendInput {LEFT 3}
@@ -35,7 +35,7 @@
 	API.PasteText(" ?>")
 	return
 
-::phe::
+::phex::
 	API.PasteText("<?php echo ''; ?>")
 	SendInput {LEFT 5}
 	return
@@ -48,20 +48,6 @@
 ::pprr::
 	API.PasteText("<?php print_r(); ?>")
 	SendInput {LEFT 4}
-	return
-
-::qt::
-	API.runPlugin("hotPasteHelper.ahk", "qTrans", "[:hu][:en][:de]")
-	SendInput {LEFT 10}
-	return
-
-::qtt::
-	API.runPlugin("hotPasteHelper.ahk", "qTrans", "[:hu]__?Hungarian__[:en]__?English__[:de]__?German__")
-	return
-
-::qtx::
-	API.PasteText("<!--:hu--><!--:--><!--:en--><!--:--><!--:de--><!--:-->")
-	SendInput {LEFT 44}
 	return
 
 ::vard::
@@ -86,6 +72,19 @@
 	API.PasteText("<?php } ?>")
 	return
 
+::qt::
+	API.runPlugin("hotPasteHelper.ahk", "qTrans", "[:hu][:en][:de]")
+	SendInput {LEFT 10}
+	return
+
+::qtt::
+	API.runPlugin("hotPasteHelper.ahk", "qTrans", "[:hu]__?Hungarian__[:en]__?English__[:de]__?German__")
+	return
+
+::qtx::
+	API.PasteText("<!--:hu--><!--:--><!--:en--><!--:--><!--:de--><!--:-->")
+	SendInput {LEFT 44}
+	return
 ; -----------------------------------------------
 ; PUREBASIC
 ; -----------------------------------------------
@@ -98,10 +97,10 @@
 ; -----------------------------------------------
 ; JAVASCRIPT
 ; -----------------------------------------------
-::cl::
+::clx::
 	API.PasteText("console.log();")
 	SendInput {LEFT 2}
-	return	
+	return
 
 ; -----------------------------------------------
 ; AUTOHOTKEY
@@ -113,12 +112,12 @@
 ; -----------------------------------------------
 ; CSS
 ; -----------------------------------------------
-::rb::
+::rbx::
 ::rgbab::
 	API.PasteText("rgba(0, 0, 0, 0.5);")
 	return
 
-::rw::
+::rwx::
 ::rgbaw::
 	API.PasteText("rgba(255, 255, 255, 0.8);")
 	return
