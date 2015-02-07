@@ -2,7 +2,7 @@
 ;@Plugin-Version 0.1
 ;@Plugin-Silent 1
 ;@Plugin-Description Advanced text replacement features - user inputs, calculator, variables, datepicker, etc.
-;@Plugin-Author tpr
+;@Plugin-Author Roland Toth (tpr)
 ;@Plugin-Tags hotstring text replacement
 
 #Hotstring EndChars `t
@@ -10,7 +10,7 @@
 #Persistent
 Return
 
-global active_id
+global zActiveId
 
 global zOptionsFile
 global zHistoryFile
@@ -26,7 +26,7 @@ global zFontSizeGlobal
 global zFontAutoCloseGlobal
 global zSortItemsGlobal
 
-global isRunning
+global zIsRunning
 
 global zMode
 global zModeHistory
@@ -37,9 +37,9 @@ Global zOriginalInput
 Global zGuiCaretPos
 Global zGuiSelection
 Global zDisableGetSelection
-Global AC
+Global zAutoComplete
 
-global GuiHWND
+global zGuiHWND
 global zGUImode
 global zFontSize
 global zSortItems
@@ -62,7 +62,7 @@ plugin_hotPasteHelper(zMode = "", zParam1 = "", zParam2 = "", zParam3 = "") {
 		zModeGlobal := zMode
 	}
 	
-	If (isRunning != true) {
+	If (zIsRunning != true) {
 		zSetOptions()
 	}
 	
@@ -429,7 +429,7 @@ zPaste(zInput = "") {
 		Return
 	}
 	
-	WinActivate, ahk_id %active_id%
+	WinActivate, ahk_id %zActiveId%
 	API.blockMonitoring(1)
 	Clipboard := zInput
 	Send, ^{vk56}
@@ -477,13 +477,13 @@ zSetOptions() {
 		}
 	}
 
-	isRunning := true
+	zIsRunning := true
 }
 
 ;~ individual settings (overrides globals)
 zSetSettings(zMode) {
 	
-	WinGet, active_id, ID, A
+	WinGet, zActiveId, ID, A
 	
 	zGUImode := zGUImodeGlobal
 	zFontSize := zFontSizeGlobal
@@ -777,9 +777,9 @@ zDatePickerGUI()  {
 	Gui, Show, xCenter yCenter AutoSize, Pick a date
 
 	Gui, +LastFound
-	GuiHWND := WinExist()
+	zGuiHWND := WinExist()
 
-	WinWaitClose, ahk_id %GuiHWND%
+	WinWaitClose, ahk_id %zGuiHWND%
 
 	Return ReturnCode
 
@@ -805,7 +805,7 @@ zComboBoxGUI(zTitle = "", zDefaultValue = "") {
 
 	isListHidden := true
 
-	IfWinExist ahk_id %GuiHWND%
+	IfWinExist ahk_id %zGuiHWND%
 	{
 		Return
 	}
@@ -855,7 +855,7 @@ zComboBoxGUI(zTitle = "", zDefaultValue = "") {
 	}
 
 	Gui, Font, s%zFontSize%, Segoe UI
-	Gui, Add, ComboBox, vzComboBox w%zWidth% xm-4 ym+1 %zChoose% %zComboBoxHeight% section %zSortItems% gAC, %zDefaults%
+	Gui, Add, ComboBox, vzComboBox w%zWidth% xm-4 ym+1 %zChoose% %zComboBoxHeight% section %zSortItems% gzAutoComplete, %zDefaults%
 	Gui, Add, Button, Default w%zButtonWidth% h%zButtonHeight% x%zXOffset% ym %zOkButtonVisibility% section, OK
 	Gui, Font, s%zFontSize%, github-octicons
 	Gui, Add, Button, section w%zButtonWidth% h%zButtonHeight% x%zXOffset% ys+%zYOffset% gAddItemButton %zActionButtonsVisibility%, % chrhex("f05d")
@@ -875,26 +875,26 @@ zComboBoxGUI(zTitle = "", zDefaultValue = "") {
 	Gui, Show, xCenter yCenter AutoSize, %zTitle% - ClipJump
 
 	Gui, +LastFound
-	GuiHWND := WinExist()
+	zGuiHWND := WinExist()
 	
 	If (zAutoClose == 1) {
 		SetTimer, GuiTimer
 	}
 
-	WinWaitActive, ahk_id %GuiHWND%
+	WinWaitActive, ahk_id %zGuiHWND%
 
-	WinActivate, ahk_id %GuiHWND%
+	WinActivate, ahk_id %zGuiHWND%
 
 	; set default value if exists
 	If (zModeHistory == "") {
-		ControlSetText, Edit1, %zDefaultValue%, ahk_id %GuiHWND%
-		ControlSend, Edit1, ^a, ahk_id %GuiHWND%
+		ControlSetText, Edit1, %zDefaultValue%, ahk_id %zGuiHWND%
+		ControlSend, Edit1, ^a, ahk_id %zGuiHWND%
 	}
 
 	; restore caret position if !singlechar
 	If (InStr(zUserSettings, "!singlechar") > 0 && zGuiCaretPos > 0) {
 		SetKeyDelay, -1, 0
-		ControlSend, Edit1, {HOME}{Right %zGuiCaretPos%}, ahk_id %GuiHWND%
+		ControlSend, Edit1, {HOME}{Right %zGuiCaretPos%}, ahk_id %zGuiHWND%
 	}
 	zGuiCaretPos := ""
 	
@@ -915,7 +915,7 @@ zComboBoxGUI(zTitle = "", zDefaultValue = "") {
 	Hotkey, ^Insert, AddItemKey, On
 	Hotkey, ^a, SelectAllKey, On
 	
-	WinWaitClose, ahk_id %GuiHWND%
+	WinWaitClose, ahk_id %zGuiHWND%
 
 	isListHidden := true
 
@@ -936,24 +936,24 @@ zComboBoxGUI(zTitle = "", zDefaultValue = "") {
 	Return ReturnCode
 	
 	GuiTimer:
-	  IfWinNotActive ahk_id %GuiHWND%
+	  IfWinNotActive ahk_id %zGuiHWND%
 	  {
-		WinClose, ahk_id %GuiHWND%
+		WinClose, ahk_id %zGuiHWND%
 		SetTimer, GuiTimer, Off
 	  }
 	  Return
 	  
 	GetCaretPos:
-		IfWinActive, ahk_id %GuiHWND%
+		IfWinActive, ahk_id %zGuiHWND%
 		{
-			zGuiCaretPos := % _Edit_CaretGetPos("Edit1", ahk_id %GuiHWND%)
+			zGuiCaretPos := % _Edit_CaretGetPos("Edit1", ahk_id %zGuiHWND%)
 			
 		}
 		return
 
 	GetSelection:
 		zDisableGetSelection := false
-		IfWinActive, ahk_id %GuiHWND%
+		IfWinActive, ahk_id %zGuiHWND%
 		{
 			ControlGet, zGuiSelection, Selected, , Edit1
 		}
@@ -966,7 +966,7 @@ zComboBoxGUI(zTitle = "", zDefaultValue = "") {
 		Return
 
 	RightKey:
-		IfWinActive, ahk_id %GuiHWND%
+		IfWinActive, ahk_id %zGuiHWND%
 		{
 			SendInput {Right}
 			GoSub GetCaretPos
@@ -974,7 +974,7 @@ zComboBoxGUI(zTitle = "", zDefaultValue = "") {
 		Return
 	
 	LeftKey:
-		IfWinActive, ahk_id %GuiHWND%
+		IfWinActive, ahk_id %zGuiHWND%
 		{
 			SendInput {Left}
 			GoSub GetCaretPos
@@ -982,7 +982,7 @@ zComboBoxGUI(zTitle = "", zDefaultValue = "") {
 		Return
 
 	DownKey:
-		IfWinActive, ahk_id %GuiHWND%
+		IfWinActive, ahk_id %zGuiHWND%
 		{
 			If (isListHidden) {
 				SendInput !{Down}
@@ -992,30 +992,30 @@ zComboBoxGUI(zTitle = "", zDefaultValue = "") {
 				Hotkey, Esc, EscKey, On
 			}
 		} Else {
-			IfWinExist, ahk_id %GuiHWND%
+			IfWinExist, ahk_id %zGuiHWND%
 			SendInput {Down}
 		}
 		Return
 
 	AddItemKey:
-		IfWinActive, ahk_id %GuiHWND%
+		IfWinActive, ahk_id %zGuiHWND%
 		{
-			ControlClick, Button2, ahk_id %GuiHWND%
-			ControlFocus, Edit1, ahk_id %GuiHWND%
+			ControlClick, Button2, ahk_id %zGuiHWND%
+			ControlFocus, Edit1, ahk_id %zGuiHWND%
 		}
 		Return
 	
 	RemoveItemKey:
-		IfWinActive, ahk_id %GuiHWND%
+		IfWinActive, ahk_id %zGuiHWND%
 		{
-			ControlClick, Button3, ahk_id %GuiHWND%
+			ControlClick, Button3, ahk_id %zGuiHWND%
 		}
 		Return
 		
 	SelectAllKey:
-		IfWinActive, ahk_id %GuiHWND%
+		IfWinActive, ahk_id %zGuiHWND%
 		{
-			ControlSend, Edit1, {HOME}+{END}, ahk_id %GuiHWND%
+			ControlSend, Edit1, {HOME}+{END}, ahk_id %zGuiHWND%
 		}
 		else
 		{
@@ -1026,21 +1026,21 @@ zComboBoxGUI(zTitle = "", zDefaultValue = "") {
 		Return
 
 	EscKey:
-		IfWinActive, ahk_id %GuiHWND%
+		IfWinActive, ahk_id %zGuiHWND%
 		{
 			If (!isListHidden) {
 				isListHidden := true
 				Hotkey, Esc, EscKey, Off
 			}
 		} Else {
-			IfWinExist, ahk_id %GuiHWND%
+			IfWinExist, ahk_id %zGuiHWND%
 			SendInput, {Esc}
 		}
 		Return
 	
 	EnterKey:
 		;Sleep, 50
-		;IfWinActive, ahk_id %GuiHWND%
+		;IfWinActive, ahk_id %zGuiHWND%
 		;{
 
 			GoSub GetCaretPos
@@ -1054,7 +1054,7 @@ zComboBoxGUI(zTitle = "", zDefaultValue = "") {
 		;}
 		Return
 
-	AC:
+	zAutoComplete:
 		If A_GuiControlEvent = DoubleClick
 		{
 			GoSub 4ButtonOK
@@ -1064,7 +1064,7 @@ zComboBoxGUI(zTitle = "", zDefaultValue = "") {
 
 	AddItemButton:
 		Gui, Submit, NoHide
-		ControlGetText, currentItem, Edit1, ahk_id %GuiHWND%
+		ControlGetText, currentItem, Edit1, ahk_id %zGuiHWND%
 
 		If !currentItem
 			Return
@@ -1077,15 +1077,15 @@ zComboBoxGUI(zTitle = "", zDefaultValue = "") {
 		
 		zAddToHistory(currentItem)
 		GuiControl,, zComboBox, |%zModeHistory%	; add to list combobox
-		ControlSetText, Edit1, %currentItem%, ahk_id %GuiHWND%
-		ControlSend, Edit1, +{HOME}, ahk_id %GuiHWND%
+		ControlSetText, Edit1, %currentItem%, ahk_id %zGuiHWND%
+		ControlSend, Edit1, +{HOME}, ahk_id %zGuiHWND%
 		
 		Return
 
 	RemoveItemButton:
 		Gui, Submit, NoHide
 
-		ControlGetText, currentItem, Edit1, ahk_id %GuiHWND%
+		ControlGetText, currentItem, Edit1, ahk_id %zGuiHWND%
 
 		Temp =
 		Loop, Parse, zModeHistory, |
@@ -1102,10 +1102,10 @@ zComboBoxGUI(zTitle = "", zDefaultValue = "") {
 		zModeHistory := Temp . "|"
 		
 		GuiControl,, zComboBox, |%zModeHistory%	; update combobox
-		ControlSend, Edit1, {Down}, ahk_id %GuiHWND%
-		ControlFocus, Edit1, ahk_id %GuiHWND%
+		ControlSend, Edit1, {Down}, ahk_id %zGuiHWND%
+		ControlFocus, Edit1, ahk_id %zGuiHWND%
 		Sleep, 100
-		GoSub AC
+		GoSub zAutoComplete
 
 		zAddToHistory(, , zModeHistory)
 
