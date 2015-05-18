@@ -4,7 +4,7 @@
 ;@Plugin-Description Only works for Text ([Text] or [File/Folder]) type data.
 ;@Plugin-Author Avi
 ;@Plugin-Tags pformat
-;@Plugin-version 0.5
+;@Plugin-version 0.6
 ;@Plugin-Previewable 0
 
 ;@Plugin-Param1 The Input Text
@@ -99,14 +99,14 @@ plugin_pformat_commonformats(zin){
 	Gui, Add, Edit, x+10 w500 h200 vzedit +multi, % zin
 
 	Gui, Add, GroupBox, xs y+5 h70 w650, Info
-	Gui, Add, Edit, xp+5 yp+15 w640 h50 +ReadOnly -Border vzinfo,
+	Gui, Add, Edit, xp+5 yp+15 w640 h50 +ReadOnly +Disabled -Border vzinfo,
 
 	Gui, Add, Button, xs y+40 +Default, OK
 	Gui, Add, Button, x+30 yp gplugin_pformat_commonformats_apply, % TXT.SET_apply
 	Gui, Add, Text, x+55 yp-15, Input Field
 	Gui, Font, s10, Lucida Console
 	Gui, Font, s10, Consolas
-	Gui, Add, Edit, x+10 yp-2 w441 h40 gzchosenformat vzinputfield, 
+	Gui, Add, Edit, x+10 yp-2 w441 h40 gzinputfield vzinputfield, 
 	Gui, Font
 	Gui, commonformat:Show,, Choose Format
 
@@ -150,18 +150,28 @@ plugin_pformat_commonformats_end:
 	WinWaitClose, Choose Format
 	return
 
+zinputfield:
+	Gui, commonformat:Submit, nohide
+	zoutput := ( zFobj.MaxParams > 1 ) ? zFobj.(zin, zinputfield) : zFobj.(zin)
+	STORE.ClipboardChanged := 0 		; remove any clipboard change
+	GuiControl, commonformat:, Edit1, % zoutput
+	GuiControl, commonformat:, Edit2, % STORE["commonformats_" zchosenformat]
+	return
+
 zchosenformat:
+	GuiControl, commonformat:, Edit3, % ""
 	Gui, commonformat:Submit, nohide
 	if (A_GuiEvent="DoubleClick") && (zDone!="")
 		gosub commonformatbuttonOK
-	ELSE {
+	else {
 		if zchosenformat=
 			zchosenformat := "None"
 		zFobj := Func("plugin_pformat_commonformats_" zchosenformat)
-		zoutput := ( zFobj.MaxParams > 1 ) ? zFobj.(zin, zinputfield) : zFobj.(zin)
-		STORE.ClipboardChanged := 0 		; remove any clipboard change
-		GuiControl, commonformat:, Edit1, % zoutput
-		GuiControl, commonformat:, Edit2, % STORE["commonformats_" zchosenformat]
+		if ( zFobj.MaxParams < 2 )
+			GuiControl, commonformat:Disable, Edit3
+		else
+			GuiControl, commonformat:Enable, Edit3
+		gosub zinputfield
 	}
 	return
 
