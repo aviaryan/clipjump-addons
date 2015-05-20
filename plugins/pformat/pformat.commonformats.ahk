@@ -169,8 +169,10 @@ zchosenformat:
 		zFobj := Func("plugin_pformat_commonformats_" zchosenformat)
 		if ( zFobj.MaxParams < 2 )
 			GuiControl, commonformat:Disable, Edit3
-		else
+		else {
 			GuiControl, commonformat:Enable, Edit3
+			GuiControl, commonformat:Focus, Edit3
+		}
 		gosub zinputfield
 	}
 	return
