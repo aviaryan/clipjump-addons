@@ -108,7 +108,7 @@ plugin_pformat_commonformats(zin){
 	Gui, Font, s10, Consolas
 	Gui, Add, Edit, x+10 yp-2 w441 h40 gzinputfield vzinputfield, 
 	Gui, Font
-	Gui, commonformat:Show,, Choose Format
+	Gui, commonformat:Show,, % "Choose Format"
 
 	if !FileExist(ztF)
 	{
